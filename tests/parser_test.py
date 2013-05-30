@@ -23,7 +23,7 @@ class TestProblem(unittest.TestCase):
 
 
     def test_Problem(self):
-        with self.assertRaisesRegex(NotImplementedError, 'Problem.problem()'):
+        with self.assertRaisesRegex(NotImplementedError, 'Problem._problem()'):
             problem = Problem(self.locator)
             str(problem)
 
@@ -250,11 +250,8 @@ class TestExpatContentHandlerAPI(unittest.TestCase):
 
 class TestExpatContentHandler(unittest.TestCase):
     def setUp(self):
-        self.parser = xml.sax.make_parser()
-        self.locator = xml.sax.expatreader.ExpatLocator(self.parser)
         self.dch = DCH()
-        self.ech = ExpatContentHandler(self.locator, self.dch)
-        self.parser.setContentHandler(self.ech)
+        self.parser = make_parser(self.dch)
 
 
     def test_parse(self):

@@ -13,5 +13,4 @@ cli - command-line interface utility
 """
 
 __version__='0.1'
-
-from amtt import parser
+__all__ = ['parser']

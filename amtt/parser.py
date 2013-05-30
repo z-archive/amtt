@@ -7,11 +7,9 @@
 
 Parse marking data in XML format
 
-Example of usage:
-    import xml.sax
-    import xml.sax.expatreader
-    import amtt.parser
+You should create define handler class:
 
+    import amtt.parser
 
     class UserHandler(amtt.parser.UserHandler):
         def startBetfair(self, sport):
@@ -35,6 +33,17 @@ Example of usage:
         def endSubEvent(self):
             # your implementation here
 
+Example of usage (simple):
+
+    user_handler = UserHandler()
+    parser = make_parser(user_handler)
+    parser.parse('/path/to/xml')
+
+Example of usage (flexible):
+
+    import xml.sax
+    import xml.sax.expatreader
+    import amtt.parser
 
     parser = xml.sax.make_parser()
     locator = xml.sax.expatreader.ExpatLocator(parser)
@@ -42,7 +51,6 @@ Example of usage:
     content_handler = amtt.parser.ExpatContentHandler(locator, user_handler)
     parser.setContentHandler(content_handler)
     parser.parser('/path/to/xml/file')
-
 """
 import xml.sax.handler
 import xml.sax.xmlreader
@@ -57,12 +65,12 @@ class Problem(Exception):
 
 
     def __str__(self):
-        return "Line: %s Column: %s Problem: %s" % (self.line, self.column, self.problem())
+        return "Line: %s Column: %s Problem: %s" % (self.line, self.column, self._problem())
 
 
-    def problem(self):
+    def _problem(self):
         ''' description of the problem '''
-        raise NotImplementedError("%s.problem()" % self.__class__.__name__)
+        raise NotImplementedError("%s._problem()" % self.__class__.__name__)
 
 
 class UnExpectedTag(Problem):
@@ -73,7 +81,7 @@ class UnExpectedTag(Problem):
         self.expected = expected
 
 
-    def problem(self):
+    def _problem(self):
         return "unexpected tag '%s', expected '%s'" % (self.name, self.expected)
 
 
@@ -85,7 +93,7 @@ class BrokenAttributes(Problem):
         self.missed = missed
 
 
-    def problem(self):
+    def _problem(self):
         unexpected = ", ".join(self.unexpected)
         missed = ", ".join(self.missed)
         return "broken attributes, unexpected=[%s], missed=[%s]" % (unexpected, missed)
@@ -100,7 +108,7 @@ class AttributeTypeError(Problem):
         self.value = value
     
     
-    def problem(self):
+    def _problem(self):
         message = "parse attribute '%s' (expected type: '%s') invalid value '%s'"
         return message % (self.name, self.type_name, self.value)
 
@@ -387,13 +395,22 @@ class ExpatContentHandler(xml.sax.handler.ContentHandler):
         self._mode -= 1
         self._parser[self._mode].close()
 
+def make_parser(user_handler):
+    parser = xml.sax.make_parser()
+    locator = xml.sax.expatreader.ExpatLocator(parser)
+    content_handler = ExpatContentHandler(locator, user_handler)
+    parser.setContentHandler(content_handler)
+    return parser
+
+
 __all__ = [
     'Problem',
     'UnExpectedTag',
     'BrokenAttributes',
     'AttributeTypeError',
     'UserHandler', 
-    'ExpatContentHandler'
+    'ExpatContentHandler',
+    'make_parser'
 ]
 
 

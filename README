@@ -4,3 +4,24 @@ Provide way to:
  * parse data
  * store to database
  * query to database for data
+
+Requirements:
+   Python 3 (can be adapted to Python2)
+   python-psycopg2
+
+Build python package:
+    python setup.py build
+
+Test:
+    python setup.py test
+or:
+    python -m unittest -v
+
+Install python package:
+    python setup.py install
+
+Build vagrant package:
+    TODO
+
+Deploy vagrant package:
+    TODO
