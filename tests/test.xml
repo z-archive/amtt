@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<betfair sport="Soccer">
+  <event name="UEFA Champions League" date="13/09/2011">
+    <subevent title="Winner 2013/14" date="13/09/2011" time="18:45" id="109332629" TotalAmountMatched="754">
+      <selection name="B Munich" id="55265" backp1="5.00" backs1="45.25" layp1="5.10" lays1="49.00" backp2="4.80" backs2="468.77" layp2="5.40" lays2="11.25" backp3="4.70" backs3="44.00" layp3="5.50" lays3="13.74"/>
+      <selection name="Barcelona" id="55270" backp1="4.90" backs1="62.52" layp1="5.70" lays1="3.40" backp2="4.80" backs2="41.00" layp2="5.80" lays2="370.00" backp3="4.70" backs3="101.15" layp3="10.00" lays3="10.00"/>
+      <selection name="R Madrid" id="48800" backp1="5.80" backs1="283.32" layp1="6.20" lays1="476.83" backp2="5.70" backs2="45.01" layp2="6.40" lays2="5.58" backp3="5.60" backs3="6.07" layp3="7.40" lays3="260.00"/>
+      <selection name="Man Utd" id="48351" backp1="11.50" backs1="192.59" layp1="13.00" lays1="3.40" backp2="11.00" backs2="63.13" layp2="15.00" lays2="130.00" backp3="10.50" backs3="2.46" layp3="20.00" lays3="10.00"/>
+      <selection name="Man City" id="47999" backp1="11.00" backs1="187.42" layp1="13.50" lays1="4.94" backp2="10.50" backs2="2.46" layp2="16.00" lays2="120.00" backp3="9.80" backs3="247.00" layp3="20.00" lays3="10.00"/>
+      <selection name="Chelsea" id="55190" backp1="12.00" backs1="163.73" layp1="13.50" lays1="32.46" backp2="11.00" backs2="140.01" layp2="14.00" lays2="91.25" backp3="3.00" backs3="171.19" layp3="15.00" lays3="120.94"/>
+      <selection name="Paris St G" id="361309" backp1="18.00" backs1="65.91" layp1="26.00" lays1="3.40" backp2="17.50" backs2="10.90" layp2="28.00" lays2="65.00" backp3="16.50" backs3="25.00" layp3="0.00" lays3="0.00"/>
+      <selection name="Juventus" id="2423" backp1="20.00" backs1="83.97" layp1="23.00" lays1="3.40" backp2="18.50" backs2="251.73" layp2="50.00" lays2="40.00" backp3="0.00" backs3="0.00" layp3="0.00" lays3="0.00"/>
+      <selection name="Dortmund" id="44785" backp1="24.00" backs1="77.92" layp1="30.00" lays1="49.00" backp2="22.00" backs2="15.00" layp2="32.00" lays2="500.00" backp3="20.00" backs3="70.00" layp3="0.00" lays3="0.00"/>
+      <selection name="Arsenal" id="1096" backp1="27.00" backs1="67.78" layp1="30.00" lays1="4.55" backp2="26.00" backs2="60.00" layp2="38.00" lays2="42.00" backp3="0.00" backs3="0.00" layp3="0.00" lays3="0.00"/>
+      <selection name="Atl Madrid" id="214217" backp1="38.00" backs1="46.48" layp1="50.00" lays1="3.40" backp2="32.00" backs2="60.00" layp2="60.00" lays2="3.84" backp3="0.00" backs3="0.00" layp3="160.00" lays3="8.00"/>
+      <selection name="Napoli" id="676464" backp1="60.00" backs1="26.53" layp1="95.00" lays1="2.43" backp2="55.00" backs2="4.80" layp2="250.00" lays2="30.50" backp3="50.00" backs3="56.20" layp3="290.00" lays3="5.00"/>
+      <selection name="Benfica" id="48783" backp1="80.00" backs1="25.87" layp1="310.00" lays1="3.75" backp2="70.00" backs2="3.57" layp2="320.00" lays2="42.80" backp3="65.00" backs3="50.92" layp3="330.00" lays3="5.00"/>
+      <selection name="Shakhtar" id="477822" backp1="95.00" backs1="23.82" layp1="130.00" lays1="85.59" backp2="85.00" backs2="15.00" layp2="490.00" lays2="4.00" backp3="80.00" backs3="41.37" layp3="500.00" lays3="2.57"/>
+      <selection name="AC Milan" id="127991" backp1="32.00" backs1="29.83" layp1="120.00" lays1="16.28" backp2="28.00" backs2="77.04" layp2="0.00" lays2="0.00" backp3="27.00" backs3="182.59" layp3="0.00" lays3="0.00"/>
+      <selection name="Leverkusen" id="44787" backp1="130.00" backs1="21.26" layp1="270.00" lays1="4.28" backp2="110.00" backs2="15.00" layp2="350.00" lays2="5.00" backp3="100.00" backs3="33.10" layp3="900.00" lays3="33.10"/>
+      <selection name="Marseille" id="44798" backp1="180.00" backs1="9.42" layp1="460.00" lays1="5.00" backp2="170.00" backs2="5.71" layp2="900.00" lays2="33.10" backp3="140.00" backs3="13.00" layp3="0.00" lays3="0.00"/>
+      <selection name="Ajax" id="2685" backp1="210.00" backs1="7.70" layp1="630.00" lays1="2.57" backp2="200.00" backs2="4.44" layp2="640.00" lays2="4.00" backp3="180.00" backs3="10.00" layp3="900.00" lays3="33.10"/>
+      <selection name="Galatasaray" id="2436" backp1="230.00" backs1="9.42" layp1="460.00" lays1="4.00" backp2="220.00" backs2="2.00" layp2="900.00" lays2="33.10" backp3="190.00" backs3="11.00" layp3="0.00" lays3="0.00"/>
+      <selection name="Porto" id="48785" backp1="100.00" backs1="9.27" layp1="190.00" lays1="3.42" backp2="95.00" backs2="15.41" layp2="200.00" lays2="85.59" backp3="90.00" backs3="20.00" layp3="300.00" lays3="5.00"/>
+      <selection name="Olympiacos" id="1267387" backp1="190.00" backs1="13.77" layp1="440.00" lays1="4.00" backp2="160.00" backs2="11.00" layp2="0.00" lays2="0.00" backp3="150.00" backs3="22.06" layp3="0.00" lays3="0.00"/>
+      <selection name="CSKA Moscow" id="217210" backp1="200.00" backs1="9.63" layp1="440.00" lays1="4.00" backp2="190.00" backs2="5.00" layp2="900.00" lays2="33.10" backp3="160.00" backs3="11.00" layp3="0.00" lays3="0.00"/>
+      <selection name="PSV" id="48451" backp1="230.00" backs1="6.17" layp1="450.00" lays1="4.00" backp2="220.00" backs2="4.00" layp2="0.00" lays2="0.00" backp3="200.00" backs3="8.00" layp3="0.00" lays3="0.00"/>
+      <selection name="Anderlecht" id="58163" backp1="310.00" backs1="4.28" layp1="500.00" lays1="3.91" backp2="300.00" backs2="3.20" layp2="0.00" lays2="0.00" backp3="250.00" backs3="7.00" layp3="0.00" lays3="0.00"/>
+      <selection name="FC Copenhagen" id="28217" backp1="430.00" backs1="3.52" layp1="680.00" lays1="3.00" backp2="420.00" backs2="2.10" layp2="0.00" lays2="0.00" backp3="380.00" backs3="5.00" layp3="0.00" lays3="0.00"/>
+      <selection name="Celtic" id="55223" backp1="340.00" backs1="5.26" layp1="900.00" lays1="33.10" backp2="330.00" backs2="2.66" layp2="990.00" lays2="4.57" backp3="310.00" backs3="6.00" layp3="0.00" lays3="0.00"/>
+    </subevent>
+  </event>
+</betfair>

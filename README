@@ -1,0 +1,6 @@
+Marketing data feader.
+Provide way to:
+ * download data (XML-format)
+ * parse data
+ * store to database
+ * query to database for data
