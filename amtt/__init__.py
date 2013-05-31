@@ -18,4 +18,4 @@ cli - command-line interface utility
 __version__ = '0.1'
 
 
-__all__ = ['parser', 'test']
+__all__ = ['parser', 'db', 'test']

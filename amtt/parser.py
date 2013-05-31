@@ -243,12 +243,17 @@ class Parser(object):
 
 
 class Tag(object):
-    def __init__(self, locator, open, close, scheme):
+    def __init__(self, locator, open, close, scheme, name):
         super().__init__()
         self._locator = locator
         self._open = open
         self.close = close
         self._scheme = [ascheme(locator) for ascheme in scheme]
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
 
     def _broken_names_report(self, attrs):
         expected = set(ascheme.name for ascheme in self._scheme)
@@ -285,7 +290,8 @@ class Tag(object):
             return Tag(locator,
                        data_handler.startBetfair,
                        data_handler.endBetfair,
-                       scheme)
+                       scheme,
+                       'betfair')
         return create
 
     @staticmethod
@@ -299,7 +305,8 @@ class Tag(object):
             return Tag(locator,
                        data_handler.startEvent,
                        data_handler.endEvent,
-                       scheme)
+                       scheme,
+                       'event')
         return create
 
     @staticmethod
@@ -316,7 +323,8 @@ class Tag(object):
             return Tag(locator,
                        data_handler.startSubEvent,
                        data_handler.endSubEvent,
-                       scheme)
+                       scheme,
+                       'subevent')
         return create
 
     @staticmethod
@@ -335,7 +343,8 @@ class Tag(object):
             return Tag(locator,
                        data_handler.selection,
                        lambda: None,
-                       scheme)
+                       scheme,
+                       'selection')
         return create
 
 
@@ -344,19 +353,13 @@ MODE_BETFAIR = 1
 MODE_EVENT = 2
 MODE_SUBEVENT = 3
 MODE_SELECTION = 4
-MODE_LEAF = 4
 
-TAG_EXPECTED = [None,
-                'betfair',
-                'event',
-                'subevent',
-                'selection']
-TAG_SCHEME = [None,
-              Tag.betfair(),
-              Tag.event(),
-              Tag.subEvent(),
-              Tag.selection()]
-
+SCHEME_SHORT = dict()
+SCHEME_SHORT[MODE_BETFAIR] = Tag.betfair()
+SCHEME_SHORT[MODE_EVENT] = Tag.event()
+SCHEME_FULL = dict(SCHEME_SHORT)
+SCHEME_FULL[MODE_SUBEVENT] = Tag.subEvent()
+SCHEME_FULL[MODE_SELECTION] = Tag.selection()
 
 class ExpatContentHandler(xml.sax.handler.ContentHandler):
     '''
@@ -371,53 +374,55 @@ class ExpatContentHandler(xml.sax.handler.ContentHandler):
                     <subevent>      # MODE_SUBEVENT
                         <selection> # MODE_SELECTION (== MODE_LEAF)
     '''
-    def __init__(self, locator, data_handler):
+    def __init__(self, locator, data_handler, full=True):
         '''locator is instance of xml.sax.xmlreader.Locator
         data_handler is instance of UserHandler'''
         super().__init__()
         super().setDocumentLocator(locator)
         self._locator = locator
         self._mode = MODE_ROOT
-
-        def c(create):
-            if create is None:
-                return None
-            else:
-                return create(locator, data_handler)
-        self._parser = list(map(c, TAG_SCHEME))
+        if full:
+            scheme = SCHEME_FULL
+        else:
+            scheme = SCHEME_SHORT
+        
+        def c(mode):
+            return scheme[mode](locator, data_handler)
+        self._tag = dict((mode, c(mode)) for mode in scheme)
 
     def startDocument(self):
         logger.debug("startDocument, mode=%s", self._mode)
         assert(self._mode == MODE_ROOT)
-        self._mode = MODE_ROOT+1
+        self._mode = MODE_ROOT + 1
 
     def endDocument(self):
         logger.debug("endDocument, mode=%s", self._mode)
-        assert(self._mode == MODE_ROOT+1)
+        assert(self._mode == MODE_ROOT + 1)
         self._mode = MODE_ROOT
 
     def startElement(self, name, attrs):
         logger.debug("startElement(%s), mode=%s", name, self._mode)
-        expected = TAG_EXPECTED[self._mode]
-        if (expected != name):
-            e = UnExpectedTag(self._locator, name, expected)
-            logger.error(e)
-            raise e
-        self._parser[self._mode].open(attrs)
+        tag = self._tag.get(self._mode, None)
+        if tag:
+            if tag.name != name:
+                e = UnExpectedTag(self._locator, name, tag.name)
+                logger.error(e)
+                raise e
+            tag.open(attrs)
         self._mode += 1
 
     def endElement(self, name):
         logger.debug("endElement(%s), mode=%s", name, self._mode)
-        # I rely to Expat parser about open/close tags сoncord
-        assert(TAG_EXPECTED[self._mode-1] == name)
+        tag = self._tag.get(self._mode, None)
+        if tag:
+            tag.close()
         self._mode -= 1
-        self._parser[self._mode].close()
 
 
-def make_parser(user_handler):
+def make_parser(user_handler, full=True):
     parser = xml.sax.make_parser()
     locator = xml.sax.expatreader.ExpatLocator(parser)
-    content_handler = ExpatContentHandler(locator, user_handler)
+    content_handler = ExpatContentHandler(locator, user_handler, full=full)
     parser.setContentHandler(content_handler)
     return parser
 
@@ -618,7 +623,7 @@ def get_test_suite_list():
             with self.assertRaises(AssertionError):
                 ech.startDocument()
 
-        def test_double_start(self):
+        def test_double_end(self):
             ech = self.ech
             with self.assertRaises(AssertionError):
                 ech.endDocument()
@@ -642,14 +647,18 @@ def get_test_suite_list():
             ech.endElement('betfair')
 
     class TestExpatContentHandler(unittest.TestCase):
-        def setUp(self):
+        def parse(self, full):
             self.dch = DCH()
-            self.parser = make_parser(self.dch)
-
-        def test_parse(self):
+            self.parser = make_parser(self.dch, full=full)
             from os.path import join, dirname, abspath
             TEST_FILE_NAME = abspath(join(dirname(__file__), "test.xml"))
             self.parser.parse(TEST_FILE_NAME)
+
+        def test_parse_short(self):
+            self.parse(False)
+
+        def test_parse_full(self):
+            self.parse(True)
 
     logger.disabled = True
 
