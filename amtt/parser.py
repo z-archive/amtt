@@ -374,7 +374,7 @@ class ExpatContentHandler(xml.sax.handler.ContentHandler):
                     <subevent>      # MODE_SUBEVENT
                         <selection> # MODE_SELECTION (== MODE_LEAF)
     '''
-    def __init__(self, locator, data_handler, full=True):
+    def __init__(self, locator, data_handler, full=False):
         '''locator is instance of xml.sax.xmlreader.Locator
         data_handler is instance of UserHandler'''
         super().__init__()
@@ -419,7 +419,7 @@ class ExpatContentHandler(xml.sax.handler.ContentHandler):
         self._mode -= 1
 
 
-def make_parser(user_handler, full=True):
+def make_parser(user_handler, full=False):
     parser = xml.sax.make_parser()
     locator = xml.sax.expatreader.ExpatLocator(parser)
     content_handler = ExpatContentHandler(locator, user_handler, full=full)
