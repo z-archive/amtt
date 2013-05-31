@@ -57,6 +57,11 @@ import xml.sax.xmlreader
 import decimal
 from datetime import datetime
 
+
+import logging
+logger = logging.getLogger(__name__)
+
+
 class Problem(Exception):
     ''' Super class for all possible problems'''
     def __init__(self, locator):
@@ -70,7 +75,9 @@ class Problem(Exception):
 
     def _problem(self):
         ''' description of the problem '''
-        raise NotImplementedError("%s._problem()" % self.__class__.__name__)
+        e = NotImplementedError("%s._problem()" % self.__class__.__name__)
+        logger.critical(e)
+        raise e
 
 
 class UnExpectedTag(Problem):
@@ -116,7 +123,9 @@ class AttributeTypeError(Problem):
 class UserHandler(object):
     '''' You should create sub-class of UserHandler for process data from XML document '''
     def __not_implemented(self, name_and_signature):
-        raise NotImplementedError("%s.%s" % (self.__class__.__name__, name_and_signature))
+        e = NotImplementedError("%s.%s" % (self.__class__.__name__, name_and_signature))
+        logger.critical(e)
+        raise e
     
 
     def startBetfair(self, sport):
@@ -167,16 +176,23 @@ class Parser(object):
 
         def parse(self, value):
             try:
+                logger.debug("attribute name=%s type=%s attempt to parse '%s'", 
+                             self.name,
+                             self.__class__.__name__,
+                             value)
                 return self._parse(value)
             except (ValueError, decimal.InvalidOperation):
-                raise AttributeTypeError(self._locator, 
-                                         self._name, 
-                                         self.__class__.__name__,
-                                         value)
-
+                e = AttributeTypeError(self._locator, 
+                                       self._name, 
+                                       self.__class__.__name__,
+                                       value)
+                logger.error(e)
+                raise e
 
         def _parse(self, value):
-            raise NotImplementedError("%s.parse(value)" % (self.__class__.__name__))
+            e = NotImplementedError("%s.parse(value)" % (self.__class__.__name__))
+            logger.critical(e)
+            raise e
 
     
     class String(Attribute):
@@ -251,7 +267,9 @@ class Tag(object):
         actual = set(attrs.getNames())
         missed = list(expected.difference(actual))
         unexpected = list(actual.difference(expected))
-        raise BrokenAttributes(self._locator, unexpected, missed)
+        e = BrokenAttributes(self._locator, unexpected, missed)
+        logger.error(e)
+        raise e
 
 
     def _verify_names(self, attrs):
@@ -372,24 +390,30 @@ class ExpatContentHandler(xml.sax.handler.ContentHandler):
 
 
     def startDocument(self):
+        logger.debug("startDocument, mode=%s", self._mode)
         assert(self._mode == MODE_ROOT)
         self._mode = MODE_ROOT+1
 
 
     def endDocument(self):
+        logger.debug("endDocument, mode=%s", self._mode)
         assert(self._mode == MODE_ROOT+1)
         self._mode = MODE_ROOT
 
 
     def startElement(self, name, attrs):
+        logger.debug("startElement(%s), mode=%s", name, self._mode)
         expected = TAG_EXPECTED[self._mode]
         if (expected != name):
-            raise UnExpectedTag(self._locator, name, expected)
+            e = UnExpectedTag(self._locator, name, expected)
+            logger.error(e)
+            raise e
         self._parser[self._mode].open(attrs)
         self._mode += 1
 
 
     def endElement(self, name):
+        logger.debug("endElement(%s), mode=%s", name, self._mode)
         # I rely to Expat parser about open/close tags сoncord
         assert(TAG_EXPECTED[self._mode-1] == name)
         self._mode -= 1

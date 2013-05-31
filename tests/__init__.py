@@ -8,6 +8,7 @@ import unittest
 import sys
 import os
 
+
 # Required for import
 ROOT_PATH=os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(ROOT_PATH)
@@ -27,6 +28,10 @@ class TestCommand(distutils.cmd.Command):
 
 
     def initialize_options(self):
+        import logging
+        #logging.basicConfig(level=logging.DEBUG)
+        logger = logging.getLogger('amtt.parser')
+        logger.disabled=True
         pass
 
 
