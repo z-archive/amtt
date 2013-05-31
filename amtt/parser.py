@@ -624,8 +624,8 @@ def get_test_suite_list():
             self.parser = make_parser(self.dch)
 
         def test_parse(self):
-            from os.path import join, dirname
-            TEST_FILE_NAME = join(dirname(__file__), "..", "tests", "test.xml")
+            from os.path import join, dirname, abspath
+            TEST_FILE_NAME = abspath(join(dirname(__file__), "test.xml"))
             self.parser.parse(TEST_FILE_NAME)
 
     loader = unittest.TestLoader()
