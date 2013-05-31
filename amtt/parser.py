@@ -329,8 +329,16 @@ MODE_SUBEVENT = 3
 MODE_SELECTION = 4
 MODE_LEAF = 4
 
-TAG_EXPECTED = [None, 'betfair', 'event', 'subevent', 'selection']
-TAG_SCHEME = [None, Tag.betfair(), Tag.event(), Tag.subEvent(), Tag.selection()]
+TAG_EXPECTED = [None,
+                'betfair',
+                'event',
+                'subevent',
+                'selection']
+TAG_SCHEME = [None,
+              Tag.betfair(),
+              Tag.event(),
+              Tag.subEvent(),
+              Tag.selection()]
 
 
 class ExpatContentHandler(xml.sax.handler.ContentHandler):
@@ -390,10 +398,10 @@ def make_parser(user_handler):
     parser.setContentHandler(content_handler)
     return parser
 
+
 def get_test_suite_list():
     import functools
     import unittest
-
 
     class TestProblem(unittest.TestCase):
         def setUp(self):
@@ -402,7 +410,8 @@ def get_test_suite_list():
             self.message = "Line: 1 Column: None Problem: %s"
 
         def test_Problem(self):
-            with self.assertRaisesRegex(NotImplementedError, 'Problem._problem()'):
+            with self.assertRaisesRegex(NotImplementedError,
+                                        'Problem._problem()'):
                 problem = Problem(self.locator)
                 str(problem)
 
@@ -421,10 +430,10 @@ def get_test_suite_list():
                                          "somename",
                                          "sometype",
                                          "somevalue")
-            expected = "parse attribute 'somename' (expected type: 'sometype') " \
+            expected = "parse attribute 'somename' " \
+                       "(expected type: 'sometype') " \
                        "invalid value 'somevalue'"
             self.assertEqual(str(problem), self.message % expected)
-
 
     class TestParser(unittest.TestCase):
         def setUp(self):
@@ -446,7 +455,6 @@ def get_test_suite_list():
             actual = parser.parse(source)
             self.assertEqual(actual, expected)
 
-
     class TestParserInt(TestParser):
         def test_invalid(self):
             self._invalid(Parser.int, "fail")
@@ -454,11 +462,9 @@ def get_test_suite_list():
         def test_correct(self):
             self._correct(Parser.int, "123", 123)
 
-
     class TestParserString(TestParser):
         def test_correct(self):
             self._correct(Parser.string, "some string", "some string")
-
 
     class TestParserMoney(TestParser):
         def test_invalid(self):
@@ -467,7 +473,6 @@ def get_test_suite_list():
         def test_correct(self):
             self._correct(Parser.money, "123.54", decimal.Decimal('123.54'))
 
-
     class TestParserDate(TestParser):
         def test_invalid(self):
             self._invalid(Parser.date, "fail")
@@ -475,14 +480,12 @@ def get_test_suite_list():
         def test_correct(self):
             self._correct(Parser.date, "13/09/2013", date(2013, 9, 13))
 
-
     class TestParserTime(TestParser):
         def test_invalid(self):
             self._invalid(Parser.time, "fail")
 
         def test_correct(self):
             self._correct(Parser.time, "12:43", time(12, 43))
-
 
     class DCH(UserHandler):
         def __init__(self):
@@ -509,14 +512,12 @@ def get_test_suite_list():
         def endSubEvent(self):
             self.result.append(("end", "subEvent", None))
 
-
     def convertAttrs(method):
         @functools.wraps(method)
         def wrapper(self, *args, attrs=None):
             attrs = xml.sax.xmlreader.AttributesImpl(attrs)
             return method(self, *args, attrs=attrs)
         return wrapper
-
 
     class TestTag(unittest.TestCase):
         def setUp(self):
@@ -541,7 +542,8 @@ def get_test_suite_list():
         @convertAttrs
         def _invalid(self, create, message, attrs=None):
             parser = create(self.locator, self.dch)
-            with self.assertRaisesRegex(BrokenAttributes, self.message % message):
+            with self.assertRaisesRegex(BrokenAttributes,
+                                        self.message % message):
                 parser.open(attrs)
             self.assertEqual(self.dch.result, [])
 
@@ -558,15 +560,15 @@ def get_test_suite_list():
 
         def test_broken_attributes_two(self):
             attrs = {'bad': 'value2'}
-            expected = "broken attributes, unexpected=\[bad\], missed=\[sport\]"
+            expected = "broken attributes, " \
+                       "unexpected=\[bad\], " \
+                       "missed=\[sport\]"
             self._invalid(Tag.betfair(), expected, attrs=attrs)
-
 
     class ECH(ExpatContentHandler):
         @convertAttrs
         def startElement(self, name, attrs=None):
             return super().startElement(name, attrs)
-
 
     class TestExpatContentHandlerAPI(unittest.TestCase):
         def setUp(self):
@@ -605,15 +607,16 @@ def get_test_suite_list():
         def test_parse(self):
             ech = self.ech
             ech.startDocument()
-            expected = self.message % "unexpected tag 'bad', expected 'betfair'"
+            expected = self.message % "unexpected tag 'bad', " \
+                                      "expected 'betfair'"
             with self.assertRaisesRegex(UnExpectedTag, expected):
                 ech.startElement("bad", attrs={})
             ech.startElement("betfair", attrs={'sport': 'value'})
-            expected = self.message % "unexpected tag 'betfair', expected 'event'"
+            expected = self.message % "unexpected tag 'betfair', " \
+                                      "expected 'event'"
             with self.assertRaisesRegex(UnExpectedTag, expected):
                 ech.startElement("betfair", attrs={'sport': 'value'})
             ech.endElement('betfair')
-
 
     class TestExpatContentHandler(unittest.TestCase):
         def setUp(self):
@@ -625,10 +628,9 @@ def get_test_suite_list():
             TEST_FILE_NAME = join(dirname(__file__), "..", "tests", "test.xml")
             self.parser.parse(TEST_FILE_NAME)
 
-
     loader = unittest.TestLoader()
     return [loader.loadTestsFromTestCase(test)
-            for test in [TestProblem, 
+            for test in [TestProblem,
                          TestParser,
                          TestParserInt,
                          TestParserString,
