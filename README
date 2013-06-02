@@ -14,11 +14,21 @@ Build python package:
 
 Test:
     python setup.py test
-or:
-    python -m unittest -v
 
 Install python package:
     python setup.py install
+
+How to use:
+    1) Create database in PostgreSQL
+    createdb database_name
+    2) Create tables in database
+    ./amtt.py --database=database_name prepare 
+    3) Parse data:
+    ./amtt.py --database=database_name parse
+    4) List event count:
+    ./amtt.py --database=database_name stats
+    5) List event from database:
+    ./amtt.py --database=database_name stats
 
 Build vagrant package:
     TODO
