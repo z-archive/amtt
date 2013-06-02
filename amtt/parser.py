@@ -19,21 +19,9 @@ You should create define handler class:
             # your implementation here
         def startEvent(self, name, date):
             # your implementation here
-        def startSubEvent(self, id, title, date, time, totalAmountMathced):
-            # your implementation here
-        def selection(self, id, name, *money):
-            '''
-            *money is
-                backp1, backs1, layp1, lays1,
-                backp2, backs2, layp2, lays2,
-                backp3, backs3, layp3, lays3
-            '''
-            # your implementation here
         def endBetfair(self):
             # your implementation here
         def endEvent(self):
-            # your implementation here
-        def endSubEvent(self):
             # your implementation here
 
 Example of usage (simple):
@@ -127,11 +115,24 @@ class UserHandler(object):
     ''' You should create sub-class of UserHandler
     for process data from XML document
     '''
+    def __init__(self, full):
+        self._full = full
+
+    @property
+    def full(self):
+        return self._full
+
     def __not_implemented(self, name_and_signature):
         message = "%s.%s" % (self.__class__.__name__, name_and_signature)
         e = NotImplementedError(message)
         logger.critical(e)
         raise e
+
+    def start(self):
+        pass
+
+    def end(self):
+        pass
 
     def startBetfair(self, sport):
         self.__not_implemented('startBetfair(sport)')
@@ -361,6 +362,7 @@ SCHEME_FULL = dict(SCHEME_SHORT)
 SCHEME_FULL[MODE_SUBEVENT] = Tag.subEvent()
 SCHEME_FULL[MODE_SELECTION] = Tag.selection()
 
+
 class ExpatContentHandler(xml.sax.handler.ContentHandler):
     '''
     Parses XML with fixed (defined, known) structure.
@@ -374,31 +376,35 @@ class ExpatContentHandler(xml.sax.handler.ContentHandler):
                     <subevent>      # MODE_SUBEVENT
                         <selection> # MODE_SELECTION (== MODE_LEAF)
     '''
-    def __init__(self, locator, data_handler, full=False):
+    def __init__(self, locator, handler):
         '''locator is instance of xml.sax.xmlreader.Locator
         data_handler is instance of UserHandler'''
         super().__init__()
         super().setDocumentLocator(locator)
         self._locator = locator
         self._mode = MODE_ROOT
-        if full:
+        self._start = handler.start
+        self._end = handler.end
+        if handler.full:
             scheme = SCHEME_FULL
         else:
             scheme = SCHEME_SHORT
-        
+
         def c(mode):
-            return scheme[mode](locator, data_handler)
+            return scheme[mode](locator, handler)
         self._tag = dict((mode, c(mode)) for mode in scheme)
 
     def startDocument(self):
         logger.debug("startDocument, mode=%s", self._mode)
         assert(self._mode == MODE_ROOT)
         self._mode = MODE_ROOT + 1
+        self._start()
 
     def endDocument(self):
         logger.debug("endDocument, mode=%s", self._mode)
         assert(self._mode == MODE_ROOT + 1)
         self._mode = MODE_ROOT
+        self._end()
 
     def startElement(self, name, attrs):
         logger.debug("startElement(%s), mode=%s", name, self._mode)
@@ -419,10 +425,11 @@ class ExpatContentHandler(xml.sax.handler.ContentHandler):
         self._mode -= 1
 
 
-def make_parser(user_handler, full=False):
+def make_parser(user_handler):
+    assert(isinstance(user_handler, UserHandler))
     parser = xml.sax.make_parser()
     locator = xml.sax.expatreader.ExpatLocator(parser)
-    content_handler = ExpatContentHandler(locator, user_handler, full=full)
+    content_handler = ExpatContentHandler(locator, user_handler)
     parser.setContentHandler(content_handler)
     return parser
 
@@ -516,7 +523,8 @@ def get_test_suite_list():
             self._correct(Parser.time, "12:43", time(12, 43))
 
     class DCH(UserHandler):
-        def __init__(self):
+        def __init__(self, full=False):
+            super().__init__(full)
             self.result = []
 
         def startBetfair(self, *args):
@@ -648,8 +656,8 @@ def get_test_suite_list():
 
     class TestExpatContentHandler(unittest.TestCase):
         def parse(self, full):
-            self.dch = DCH()
-            self.parser = make_parser(self.dch, full=full)
+            self.dch = DCH(full)
+            self.parser = make_parser(self.dch)
             from os.path import join, dirname, abspath
             TEST_FILE_NAME = abspath(join(dirname(__file__), "test.xml"))
             self.parser.parse(TEST_FILE_NAME)
