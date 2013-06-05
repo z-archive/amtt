@@ -9,26 +9,53 @@ Requirements:
    Python 3 (can be adapted to Python2)
    python-psycopg2
 
-Build python package:
-    python setup.py build
+How to prepare for work:
+
+1) Install PostgreSQL:
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main" | tee /etc/apt/sources.list.d/postgresql.list
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+    apt-get update
+    apt-get install -y postgresql-9.2 postgresql-client-9.2
+    apt-get install -y postgresql-contrib-9.2 
+    service postgresql start
+
+2) For work you need 
+ * ident authentication for your (linux) user
+ * some database <database_name> with owner - your user
+
+2.1) On fresh linux installation you can:
+   * Create new user
+     apt-get install -y sudo
+     adduser <username>
+     sudo -u postgres createuser --username=postgres --password --pwprompt --encrypted --createdb --createrole <username>
+   * Create new database
+     sudo -u postgres createdb --username=<username> --owner=<username> --password --host=127.0.0.1 <database_name>
+   * Login to new user
+     su <username>
+
+3) How to use:
+    Create tables in database
+      ./amtt.py --database=<database_name> prepare 
+    Parse data:
+      ./amtt.py --database=<database_name> parse <url_or_filename>
+    Show event count:
+    	 ./amtt.py --database=<database_name> stats
+    List events:
+    	 ./amtt.py --database=database_name list
+    Clear tables:
+         ./amtt.py --database=database_name clear
+
+    Please note: you do NOT need python package installation for that
 
 Test:
     python setup.py test
 
-Install python package:
-    python setup.py install
+Build python package:
+    python setup.py build
 
-How to use:
-    1) Create database in PostgreSQL
-    createdb database_name
-    2) Create tables in database
-    ./amtt.py --database=database_name prepare 
-    3) Parse data:
-    ./amtt.py --database=database_name parse
-    4) List event count:
-    ./amtt.py --database=database_name stats
-    5) List event from database:
-    ./amtt.py --database=database_name stats
+Install python package:
+    # you do NOT need this for use ./amtt.py
+    python setup.py install
 
 Build vagrant package:
     TODO
